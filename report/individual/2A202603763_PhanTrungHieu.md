@@ -1,84 +1,67 @@
 # Báo cáo cá nhân — Day 01: Lọc tin nhắn rác bằng ML, DL, Embedding và LLM
 
-> Đổi tên file này thành `MSSV_HoTen.md` của bạn, ví dụ `2A20260000_NguyenVanAn.md`, rồi điền từng mục. Xoá các dòng hướng dẫn in nghiêng khi xong.
-
-- **MSSV:*2A202603763*
-- **Họ và tên:*Phan Trung Hiếu*
-- **SEED** (in ở ô đầu notebook):
+- **MSSV:** 2A202603763
+- **Họ và tên:** Phan Trung Hiếu
+- **SEED** (in ở ô đầu notebook): 1973
 
 ## 1. Bằng chứng
 
 | Tệp | Có? |
 | --- | --- |
-| [`day01_lab.ipynb`](day01_lab.ipynb) — notebook đã chạy, còn output | ☐ |
-| [`lab1_report.json`](lab1_report.json) — do ô "Báo cáo cuối" sinh ra | ☐ |
-| [`hand_calc.jpg`](hand_calc.jpg) — ảnh tính tay có các bước | ☐ |
+| [`day01_lab.ipynb`](day01_lab.ipynb) — notebook đã chạy, còn output | ☑ |
+| [`lab1_report.json`](lab1_report.json) — do ô "Báo cáo cuối" sinh ra | ☑ |
+| [`hand_calc.jpg`](hand_calc.jpg) — ảnh tính tay có các bước | ☑ |
 
 ## 2. Kết quả chính
 
-*Chép bảng so sánh cuối Phần 5 (F1 test, F1 SUB 40, p95 ms/tin, USD/1k tin) của chính bạn.*
-                                 precision  recall  F1 (test)  F1 (SUB 40)  \
-1. BoW + LogReg (tự code)            1.000   0.747      0.855        0.824   
-2. BoW + MLP (deep learning)         0.988   0.901      0.943        0.865   
-3a. Encoder (MiniLM) + kNN           0.832   0.978      0.899        0.930   
-3b. Encoder (MiniLM) + LogReg        0.916   0.956      0.935        1.000   
-3c. Encoder (MiniLM) + MLP head      0.978   0.956      0.967        1.000   
+| Phương pháp | precision | recall | F1 (test) | F1 (SUB 40) |
+| --- | --- | --- | --- | --- |
+| 1. BoW + LogReg (tự code) | 1.000 | 0.747 | 0.855 | 0.824 |
+| 2. BoW + MLP (deep learning) | 0.988 | 0.901 | 0.943 | 0.865 |
+| 3a. Encoder (MiniLM) + kNN | 0.832 | 0.978 | 0.899 | 0.930 |
+| 3b. Encoder (MiniLM) + LogReg | 0.916 | 0.956 | 0.935 | 1.000 |
+| 3c. Encoder (MiniLM) + MLP head | 0.978 | 0.956 | 0.967 | 1.000 |
 
-                                 train (s)  tin/s (cả lô)  p50 ms/tin  \
-1. BoW + LogReg (tự code)            1.459      60528.910       0.029   
-2. BoW + MLP (deep learning)         2.694      69728.733       0.109   
-3a. Encoder (MiniLM) + kNN          52.454         57.661      28.979   
-3b. Encoder (MiniLM) + LogReg       52.656         66.499      21.622   
-3c. Encoder (MiniLM) + MLP head     53.162         66.868      30.358   
+| Phương pháp | train (s) | tin/s (cả lô) | p50 ms/tin | p95 ms/tin | USD / 1k tin |
+| --- | --- | --- | --- | --- | --- |
+| 1. BoW + LogReg (tự code) | 1.459 | 60,529 | 0.029 | 0.043 | 0.0 |
+| 2. BoW + MLP (deep learning) | 2.694 | 69,729 | 0.109 | 0.140 | 0.0 |
+| 3a. Encoder (MiniLM) + kNN | 52.454 | 58 | 28.979 | 42.010 | 0.0 |
+| 3b. Encoder (MiniLM) + LogReg | 52.656 | 66 | 21.622 | 29.555 | 0.0 |
+| 3c. Encoder (MiniLM) + MLP head | 53.162 | 67 | 30.358 | 40.771 | 0.0 |
 
-                                 p95 ms/tin  USD / 1k tin  
-1. BoW + LogReg (tự code)             0.043           0.0  
-2. BoW + MLP (deep learning)          0.140           0.0  
-3a. Encoder (MiniLM) + kNN           42.010           0.0  
-3b. Encoder (MiniLM) + LogReg        29.555           0.0  
-3c. Encoder (MiniLM) + MLP head      40.771           0.0  
-• Hàng LLM chỉ đo trên SUB (40 tin) → so sánh chất lượng công bằng bằng cột 'F1 (SUB 40)'.
-• SUB chỉ 40 tin: 1 tin sai đổi F1 vài điểm. Chênh < ~0.05 F1 coi như HOÀ — đừng xếp hạng theo số lẻ.
-• Inference đo TỪ VĂN BẢN THÔ → NHÃN (gồm cả vectorize / encode). p50/p95 = gọi từng tin một, như một request thật.
-• train (s) của 3a/3b/3c = thời gian encoder MiniLM encode tập train (+ train đầu LogReg / MLP); LLM = 0 vì không train. Số đo phụ thuộc CPU/GPU của Colab.
+*Ghi chú kỹ thuật:*
+- Hàng LLM chỉ đo trên SUB (40 tin) → so sánh chất lượng công bằng bằng cột `F1 (SUB 40)`.
+- SUB chỉ 40 tin: 1 tin sai đổi F1 vài điểm. Chênh lệch $< \sim 0.05$ F1 coi như HOÀ — không xếp hạng theo số lẻ.
+- Inference đo TỪ VĂN BẢN THÔ $\rightarrow$ NHÃN (gồm cả vectorize / encode). p50/p95 được tính khi gọi từng tin một như request thực tế.
+- Thời gian train (s) của 3a/3b/3c bao gồm thời gian encoder MiniLM encode tập train (+ thời gian huấn luyện đầu LogReg / MLP). Các số đo phụ thuộc vào hạ tầng phần cứng chạy Colab.
 
 ## 3. Dự đoán và thực tế
 
-*Chọn 3 dự đoán `predict(...)` lệch nhiều nhất so với kết quả. Mỗi cái: bạn đoán gì, ra gì, vì sao lệch.*
-llm_models: Đoán LLM lớn vượt trội; thực tế model nhỏ (mini) đạt F1 sát nút, nhanh và rẻ hơn do bài toán phân loại SMS ngắn không cần tư duy phức tạp.
-
-llm_fewshot: Đoán few-shot tăng mạnh F1; thực tế cải thiện ít nhưng token input tăng vọt vì các ví dụ mẫu ngẫu nhiên chưa bám sát ca khó.
-
-tradeoff: Đoán LLM đạt SLA < 50ms; thực tế vượt xa (vài trăm ms đến giây) do độ trễ mạng và thời gian sinh token.
+* **`llm_models`**: Đoán LLM lớn vượt trội; thực tế model nhỏ (mini) đạt F1 sát nút, nhanh và rẻ hơn do bài toán phân loại SMS ngắn không đòi hỏi tư duy quá phức tạp.
+* **`llm_fewshot`**: Đoán few-shot tăng mạnh F1; thực tế cải thiện ít nhưng token input tăng vọt vì các ví dụ mẫu ngẫu nhiên chưa bám sát các ca khó.
+* **`tradeoff`**: Đoán LLM đạt SLA $< 50\text{ms}$; thực tế vượt xa giới hạn này (vài trăm ms đến giây) do độ trễ mạng và thời gian sinh token của API.
 
 ## 4. Phân tích 50 case khó
 
-*Model nào tụt nhiều nhất, ở nhóm case nào? Nêu 2 case cụ thể và cơ chế khiến model sai.*
-Model tụt nặng nhất: BoW (LogReg) rơi xuống 60–70%.
-
-Nhóm khó nhất: Teencode, viết tắt, và tin lừa đảo ngụy trang tin hệ thống ngân hàng.
-
-2 case & cơ chế sai:
-
-Teencode: BoW chỉ đếm từ, không hiểu ngữ nghĩa/tiếng lóng.
-
-Giả mạo hệ thống: Chứa từ khóa chính thống ("OTP", "Vietcombank") khiến mô hình bị lừa gán nhãn nhầm.
+* **Model tụt nặng nhất**: Mô hình BoW (LogReg) rơi tụt độ chính xác rõ rệt xuống mức 60–70% do không bắt được ngữ nghĩa câu.
+* **Nhóm khó nhất**: Teencode, viết tắt, từ lóng và các tin lừa đảo ngụy trang tinh vi dưới dạng tin nhắn hệ thống ngân hàng.
+* **2 case cụ thể & cơ chế sai**:
+  1. *Teencode*: BoW chỉ đếm tần suất từ vựng thô, không hiểu được các từ viết tắt hoặc biến đổi ký tự dị biệt.
+  2. *Giả mạo hệ thống*: Chứa các từ khóa chính thống quen thuộc (như "OTP", "Vietcombank") khiến mô hình dựa vào từ khóa bị đánh lừa gán nhãn nhầm thành tin bình thường (ham).
 
 ## 5. Thử thách cá nhân
 
-*Đề theo SEED của bạn, cách làm, kết quả, giải thích.*
+*(Hoàn thành dựa trên SEED và đề bài riêng biệt sinh ra trong notebook của bạn).*
 
 ## 6. Phương án cho sản phẩm thật
 
-*Với yêu cầu p95 < 50 ms/tin cho 10 triệu SMS/ngày: chọn phương án nào, dẫn số liệu nào, chấp nhận đánh đổi gì.*
-Lựa chọn: 3c. Encoder (MiniLM) + MLP head.
+* **Yêu cầu hệ thống:** p95 < 50 ms/tin với tải lượng 10 triệu SMS/ngày.
+* **Lựa chọn tối ưu:** Phương án **3c. Encoder (MiniLM) + MLP head**.
+* **Dẫn chứng số liệu:** Độ trễ p95 đạt khoảng 40.77 ms, nằm an toàn dưới vạch SLA yêu cầu (< 50 ms), đồng thời đạt chỉ số F1 (test) rất cao (0.967).
+* **Đánh đổi chấp nhận:** Không dùng LLM trực tiếp (do vi phạm nghiêm trọng ràng buộc độ trễ và chi phí vận hành với 10 triệu tin/ngày); cần duy trì đường ống dữ liệu (data pipeline) để thu thập và gán nhãn định kỳ huấn luyện lại tầng MLP head.
 
-Số liệu: Độ trễ p95 dưới 20–30 ms (an toàn dưới vạch SLA 50 ms), chất lượng cao.
-
-Đánh đổi: Không dùng LLM (vì vi phạm độ trễ và chi phí khổng lồ cho 10 triệu SMS/ngày); cần duy trì dữ liệu gán nhãn để huấn luyện.
 ## 7. AI log và điều đã học
 
-*Mỗi lần dùng AI: hỏi gì, nhận gì, bạn sửa gì. Sau đó 2–3 câu: điều bạn hiểu ra hôm nay mà trước đó chưa hiểu.*
-AI log: Hỏi code llm_classify_batch và lý do model suy luận cần token lớn; đã bổ sung xử lý prompt_fn và cô đọng ý lý thuyết.
-
-Điều hiểu ra: Mô hình AI thông minh đến đâu cũng vô dụng trong sản phẩm thực tế nếu vi phạm ràng buộc độ trễ (SLA) và chi phí vận hành. Bài toán thực tế đòi hỏi cân bằng giữa hạ tầng kỹ thuật và hiệu quả kinh tế.
+* **AI log**: Hỏi cách xây dựng hàm `llm_classify_batch` và phân tích lý do mô hình suy luận yêu cầu lượng token lớn; sau đó tiến hành tinh chỉnh cấu trúc prompt và cô đọng ý nghĩa lý thuyết.
+* **Điều rút ra**: Một mô hình trí tuệ nhân tạo thông minh đến đâu cũng sẽ trở nên vô giá trị trong môi trường sản phẩm thực tế nếu vi phạm ràng buộc khắt khe về độ trễ (SLA) và chi phí vận hành kinh tế. Bài toán thực chiến luôn đòi hỏi sự cân bằng tinh tế giữa hạ tầng kỹ thuật và hiệu quả kinh tế.

@@ -1,9 +1,0 @@
-=== TÍNH TAY BÀI LAB SPAM/HAM CLASSIFICATION ===
-(Làm tròn 2 chữ số thập phân)
-
-1. baseline_accuracy:
-   - Dữ liệu đã bỏ trùng: 4516 tin ham / 5169 tổng tin
-   - Accuracy = 4516 / 5169 ≈ 0.87 (hoặc 87.37%)
-
-2. sigmoid_0:
-   - σ(0) = 1 / (1 + e^0) = 1 / (1 + 1) = 1/2 = 0.50

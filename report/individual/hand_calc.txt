@@ -1,0 +1,28 @@
+=== TÍNH TAY BÀI LAB SPAM/HAM CLASSIFICATION ===
+(Làm tròn 2 chữ số thập phân)
+
+1. baseline_accuracy:
+   - Dữ liệu đã bỏ trùng: 4516 tin ham / 5169 tổng tin
+   - Accuracy = 4516 / 5169 ≈ 0.87 (hoặc 87.37%)
+
+2. sigmoid_0:
+   - σ(0) = 1 / (1 + e^0) = 1 / (1 + 1) = 1/2 = 0.50
+
+3. f1_example:
+   - TP = 80, FP = 20, FN = 40
+   - Precision = 80 / (80 + 20) = 0.80
+   - Recall = 80 / (80 + 40) ≈ 0.67
+   - F1 = 2 * (Precision * Recall) / (Precision + Recall)
+     F1 = 2 * (0.80 * 0.67) / (0.80 + 0.67) ≈ 0.73
+
+4. cosine_example:
+   - v1 = [1, 2, 0], v2 = [2, 1, 2]
+   - Dot product = (1*2) + (2*1) + (0*2) = 4
+   - ||v1|| = √(1² + 2² + 0²) = √5 ≈ 2.24
+   - ||v2|| = √(2² + 1² + 2²) = √9 = 3
+   - Cosine = 4 / (2.24 * 3) ≈ 0.60
+
+5. llm_cost_per_day:
+   - Input tokens: 1,000,000 * 100 = 100M tokens -> Chi phí = 100 * $0.10 = $10.00
+   - Output tokens: 1,000,000 * 1 = 1M tokens -> Chi phí = 1 * $0.50 = $0.50
+   - Tổng chi phí = $10.00 + $0.50 = $10.50 USD/ngày
